@@ -1,0 +1,7 @@
+hypercomments.settings:
+  path: 'admin/settings/hypercomments'
+  defaults:
+     _title: 'Hypercomments settings'
+     _form: '\Drupal\hypercomments\Form\SettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

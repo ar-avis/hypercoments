@@ -1,0 +1,7 @@
+type: module
+name: 'Hypercomments'
+description: 'Add block with Hypercomments and comment count to node variables.'
+core: 8.x
+package: 'Custom'
+version: 8.x-1.0
+configure: hypercomments.settings

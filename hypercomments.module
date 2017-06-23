@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * This is the module to create some integration with hypercomments service.
+ */
+
+use Drupal\Core\Link;
+
+/**
+ * Implement hook_preprocess_node()
+ */
+function hypercomments_preprocess_node(&$variables) {
+  $widget_id = \Drupal::config('hypercomments.config')
+    ->get('widget_id');
+  $langcode = \Drupal::languageManager()
+    ->getCurrentLanguage()
+    ->getId();
+
+  if ($variables['teaser'] && !empty($widget_id)) {
+    $variables['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'script',
+        '#value' => '_hcwp = window._hcwp || [];
+             _hcwp.push({widget:"Bloggerstream", widget_id:' . $widget_id . ', selector:".node_comment_count", label:"{%COUNT%}"});
+             (function() {
+               if("HC_LOAD_INIT" in window)return;
+               HC_LOAD_INIT = true;
+               var lang = "' . $langcode . '";
+               var hcc = document.createElement("script"); hcc.type = "text/javascript"; hcc.async = true;
+               hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/' . $widget_id . '/"+lang+"/widget.js";
+               var s = document.getElementsByTagName("script")[0];
+               s.parentNode.insertBefore(hcc, s.nextSibling);
+             })();',
+        '#attributes' => ['type' => 'text/javascript'],
+      ],
+      'hyperCommentsCount'
+    ];
+
+    $variables['comment_count'] = Link::createFromRoute(
+      '0',
+      'entity.node.canonical',
+      ['node' => $variables['node']->id()],
+      ['attributes' => ['class' => ['count', 'node_comment_count']]]
+    )->toRenderable();
+  }
+}
